@@ -1,12 +1,12 @@
 <?php
 // tests/Unit/UserTest.php
 use App\Models\User;
-
+use App\Models\Subscription; // ← add this alongside your existing `use App\Models\User;`
 it('can be created with a factory', function () {
     $user = User::factory()->create(['email' => 'test@example.com']);
 
     expect($user->email)->toBe('test@example.com');
-    $this->assertDatabaseHas('_users', ['email' => 'test@example.com']);
+    $this->assertDatabaseHas('users', ['email' => 'test@example.com']);
 });
 
 it('hashes the password automatically', function () {
