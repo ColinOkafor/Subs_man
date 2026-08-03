@@ -10,3 +10,5 @@ Route::get('login', function(){
 })->name('login');
 
 Route::post('login', LoginController::class)->name('login.attempt');
+
+Route::view('dashboard', 'dashboard')->name('dashboard');
