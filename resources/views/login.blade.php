@@ -7,7 +7,17 @@
 
         <form method="POST" action="{{ route('login.attempt') }}">
             @csrf
-            
+           <!-- CORRECTED AND STYLED ERROR BLOCK -->
+            @if($errors->any())
+                <div class="bg-red-50 border-l-4 border-red-500 p-4 mb-6 rounded-r-lg">
+                    <ul class="list-disc list-inside text-sm text-red-600">
+                        @foreach ($errors->all() as $error) <!-- Fixed $erros typo -->
+                            <li>{{ $error }}</li>
+                        @endforeach
+                    </ul>
+                </div>
+            @endif
+
             <div class="mb-5">
                 <label class="block text-gray-700 text-sm font-semibold mb-2" for="email">
                     Email Address

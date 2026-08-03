@@ -6,6 +6,6 @@
     <title>Dashboard</title>
 </head>
 <body>
-    
+    <h1>Welcome {{Auth::user()->name}} to the private dashboard</h1>
 </body>
 </html>
