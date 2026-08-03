@@ -1,15 +1,15 @@
 <x-layout>
-    <x-slot:navItems>
+    <x-slot:navActions>
         <span class="text-sm text-gray-600 hidden sm:inline-block">
             Logged in as <span class="font-semibold text-gray-900">{{ Auth::user()->name }}</span>
         </span>
-        <form method="POST" action="/logout" class="m-0">
+        <form method="POST" action="{{route('logout')}}" class="m-0">
             @csrf
             <button type="submit" class="text-sm bg-red-50 text-red-600 hover:bg-red-100 px-4 py-2 rounded-lg font-semibold transition duration-200">
                 Log Out
             </button>
         </form>
-    </x-slot:navItems>
+    </x-slot:navActions>
 
     <div class="max-w-7xl mx-auto">
         <div class="bg-white shadow-sm rounded-xl border border-gray-100 overflow-hidden">
