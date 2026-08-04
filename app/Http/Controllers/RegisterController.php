@@ -14,7 +14,9 @@ class RegisterController extends Controller
             'name' => ['required', 'string'],
             'email' => ['required', 'email'],
             'user_role' => ['required', 'string'],
-            'password' => ['required'],
+            'password' => ['required', Password::min(8) ->mixedCase()
+                                                        ->numbers()
+                                                        ->symbols() ],
         ]);
 
         $userData['password'] = bcrypt($userData['password']);
