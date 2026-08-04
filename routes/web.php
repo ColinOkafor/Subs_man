@@ -3,6 +3,8 @@
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\RegisterController;
 use App\Http\Controllers\LoginController;
+use App\Http\Controllers\AdminController;
+
 Route::get('/', function () {
     return view('welcome');
 });
@@ -28,13 +30,18 @@ Route::view('register','register')
     ->name('register');
 Route::post('register', RegisterController::class)->name('register.store');
 
-
-// Protect a single route
-Route::get('/admin/settings', [AdminController::class, 'settings'])
-    ->middleware(['auth', 'admin']);
-
-// Or protect a whole group of routes
-Route::middleware(['auth', 'admin'])->group(function () {
-    Route::get('/admin/dashboard', [AdminController::class, 'index']);
-    Route::get('/admin/users', [AdminController::class, 'users']);
+// --- ADMIN ROUTES (F7 Requirements) ---
+Route::middleware(['auth', 'is_admin'])->prefix('admin')->name('admin.')->group(function () {
+    
+    // F7.1 Dashboard
+    Route::get('/dashboard', [AdminController::class, 'dashboard'])->name('dashboard');
+    
+    // F7.2 User Management
+    Route::get('/users', [AdminController::class, 'users'])->name('users');
+    Route::patch('/users/{user}/deactivate', [AdminController::class, 'deactivateUser'])->name('users.deactivate');
+    Route::delete('/users/{user}', [AdminController::class, 'deleteUser'])->name('users.destroy');
+    
+    // F7.3 Queue Monitor
+    Route::get('/queue', [AdminController::class, 'queue'])->name('queue');
+    
 });
