@@ -37,14 +37,6 @@
                            id="Email" type="email" name="email" placeholder="test@emaiil.com" required>
                 </div>
 
-                 <div class="mb-6">
-                    <label class="block text-gray-700 text-sm font-semibold mb-2" for="user_role">
-                        User Role
-                    </label>
-                    <input class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-500" 
-                           id="user_role" type="text" name="user_role" placeholder="user" required>
-                </div>
-
                 <button class="w-full bg-blue-600 hover:bg-blue-700 text-white font-bold py-2.5 px-4 rounded-lg transition duration-200" type="submit">
                     Sign Up
                 </button>
