@@ -10,7 +10,9 @@ Route::get('login', function(){
     return view('login');
 })->name('login');
 
-Route::post('login', LoginController::class)->name('login.attempt');
+Route::post('login', LoginController::class)
+        ->middleware('throttle:7,1')
+        ->name('login.attempt');
 
 Route::view('dashboard', 'dashboard')->name('dashboard');
 Route::post('logout', function(){
@@ -25,3 +27,14 @@ Route::view('register','register')
     ->middleware('auth')
     ->name('register');
 Route::post('register', RegisterController::class)->name('register.store');
+
+
+// Protect a single route
+Route::get('/admin/settings', [AdminController::class, 'settings'])
+    ->middleware(['auth', 'admin']);
+
+// Or protect a whole group of routes
+Route::middleware(['auth', 'admin'])->group(function () {
+    Route::get('/admin/dashboard', [AdminController::class, 'index']);
+    Route::get('/admin/users', [AdminController::class, 'users']);
+});
