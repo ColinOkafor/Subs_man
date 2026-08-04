@@ -21,5 +21,7 @@ Route::post('logout', function(){
     return redirect('/login');
 })->name('logout');
 
-Route::view('register','register')->name('register');
+Route::view('register','register')
+    ->middleware('auth')
+    ->name('register');
 Route::post('register', RegisterController::class)->name('register.store');
