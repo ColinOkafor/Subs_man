@@ -7,7 +7,7 @@
                 <p class="text-gray-500 text-sm mt-1">Keeping track of your schedules</p>
             </div>
 
-            <form method="POST" action="{{ route('register') }}">
+            <form method="POST" action="{{ route('register.store') }}">
                 @csrf
                 
                 @if($errors->any())
