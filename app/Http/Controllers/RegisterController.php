@@ -6,6 +6,7 @@ use Illuminate\Http\Request;
 use Illuminate\Http\RedirectResponse;
 use App\Models\User;                  // FIX 1: Correct User model namespace
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Validation\Rules\Password; // <-- Added this import
 
 class RegisterController extends Controller
 {
