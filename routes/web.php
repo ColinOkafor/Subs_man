@@ -26,7 +26,7 @@ Route::post('logout', function(){
 })->name('logout');
 
 Route::view('register','register')
-    ->middleware('auth')
+    ->middleware('guest')
     ->name('register');
 Route::post('register', RegisterController::class)->name('register.store');
 
