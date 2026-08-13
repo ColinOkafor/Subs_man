@@ -45,3 +45,9 @@ Route::middleware(['auth', 'is_admin'])->prefix('admin')->name('admin.')->group(
     Route::get('/queue', [AdminController::class, 'queue'])->name('queue');
     
 });
+Route::middleware(['auth'])->group(function(){
+    Route::get('/subscriptions', [SubscriptionController::class, 'index'])->name('subscriptions.index');
+    Route::get('/subscriptions/create_sub', [SubscriptionController::class, 'create'])->name('subscription.create');
+    Route::post('/subscriptions', [Subscriptions::class, 'store'])->name('subscriptions.store');
+    Route::get('/subscriptions/{subscription}', [SubscriptionController::class, 'show'])->name(subscriptions.show);
+});
