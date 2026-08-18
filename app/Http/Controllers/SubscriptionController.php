@@ -58,4 +58,37 @@ class SubscriptionController extends Controller
             'subscription' => $subscription
         ]);
     }
+        public function edit(Request $request, Subscription $subscription){
+        // SECURITY: Reject if the logged-in user does not own this subscription
+        abort_if($subscription->user_id !== $request->user()->id, 403, 'Unauthorized access.');
+
+        return view('subscriptions.edit', compact('subscription'));
+    }
+
+    public function update(Request $request, Subscription $subscription){
+        // SECURITY CHECK
+        abort_if($subscription->user_id !== $request->user()->id, 403, 'Unauthorized access.');
+
+        // 1. VALIDATE: Use the exact same validation rules you used in your store() method
+        $validatedData = $request->validate([
+            'name' => ['required', 'string'],
+            'cost' => ['required', 'decimal:2'],
+            // ... the rest of your rules ...
+        ]);
+
+        // 2. UPDATE THE RECORD
+        $subscription->update($validatedData);
+
+        // 3. REDIRECT
+        return redirect()->route('subscriptions.index')->with('status', 'Subscription updated.');
+    }
+
+    public function destroy(Request $request, Subscription $subscription){
+        // SECURITY CHECK
+        abort_if($subscription->user_id !== $request->user()->id, 403, 'Unauthorized access.');
+
+        $subscription->delete();
+
+        return redirect()->route('subscriptions.index')->with('status', 'Subscription deleted.');
+    }
 }

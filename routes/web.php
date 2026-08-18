@@ -49,5 +49,14 @@ Route::middleware(['auth'])->group(function(){
     Route::get('/subscriptions', [SubscriptionController::class, 'index'])->name('subscriptions.index');
     Route::get('/subscriptions/create_sub', [SubscriptionController::class, 'create'])->name('subscription.create');
     Route::post('/subscriptions', [Subscriptions::class, 'store'])->name('subscriptions.store');
-    Route::get('/subscriptions/{subscription}', [SubscriptionController::class, 'show'])->name(subscriptions.show);
+    Route::get('/subscriptions/{subscription}', [SubscriptionController::class, 'show'])->name('subscriptions.show');
 });
+
+// Subscription Management
+Route::get('/subscriptions/{subscription}/edit', [SubscriptionController::class, 'edit'])->name('subscriptions.edit');
+Route::put('/subscriptions/{subscription}', [SubscriptionController::class, 'update'])->name('subscriptions.update');
+Route::delete('/subscriptions/{subscription}', [SubscriptionController::class, 'destroy'])->name('subscriptions.destroy');
+
+// Account Deletion
+// (It is best practice to handle user profiles in their own controller)
+Route::delete('/account', [ProfileController::class, 'destroy'])->name('account.destroy');
