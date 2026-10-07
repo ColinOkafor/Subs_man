@@ -21,7 +21,6 @@ it('requires a unique email', function () {
     expect(fn () => User::factory()->create(['email' => 'duplicate@example.com']))
         ->toThrow(\Illuminate\Database\QueryException::class);
 });
-// tests/Unit/UserTest.php — add this to your existing file
 it('can have many subscriptions', function () {
     $user = User::factory()->create();
     Subscription::factory()->count(3)->create(['user_id' => $user->id]);
