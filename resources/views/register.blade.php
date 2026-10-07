@@ -44,7 +44,7 @@
         </div>
         
         <p class="text-center text-gray-600 text-sm mt-4">
-            Already have an account? <a href="/login" class="text-blue-600 font-semibold hover:underline">Sign up</a>
+            Already have an account? <a href="/login" class="text-blue-600 font-semibold hover:underline">Log in</a>
         </p>
     </div>
 </x-layout>

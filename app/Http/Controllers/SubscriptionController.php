@@ -15,7 +15,6 @@ class SubscriptionController extends Controller
     }
     public function store(Request $request){
         // 1. STRICT VALIDATION
-        // Do not blindly accept data. You must validate:
         // - name: required, string, max 255
         // - cost: required, numeric, min 0
         // - billing_cycle: required, string (use an 'in' rule for monthly/yearly)
@@ -33,7 +32,7 @@ class SubscriptionController extends Controller
         ]);
 
         // 2. CREATE THE RECORD
-        // You MUST associate this subscription with the logged-in user.
+        // MUST associate this subscription with the logged-in user.
         // Do not pass a user_id from the form (that is a massive security flaw).
         // Grab it from the server side: $request->user()->subscriptions()->create(...)
        $request->user()->subscriptions()->create($userData);
@@ -69,11 +68,11 @@ class SubscriptionController extends Controller
         // SECURITY CHECK
         abort_if($subscription->user_id !== $request->user()->id, 403, 'Unauthorized access.');
 
-        // 1. VALIDATE: Use the exact same validation rules you used in your store() method
+        // 1. VALIDATE: Use the exact same validation rules in store() method
         $validatedData = $request->validate([
             'name' => ['required', 'string'],
             'cost' => ['required', 'decimal:2'],
-            // ... the rest of your rules ...
+            // ... the rest of the rules ...
         ]);
 
         // 2. UPDATE THE RECORD
