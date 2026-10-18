@@ -11,19 +11,19 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('_subscriptions', function (Blueprint $table) {
+        Schema::create('subscriptions', function (Blueprint $table) {
             $table->id();
             $table->foreignId('user_id')
                   ->constrained()
                   ->onDelete('cascade');
             $table->string('name');
-            $table->double('amount');
+            $table->decimal('cost', 10, 2);
             $table->string('status');
             $table->string('billing_cycle');
             $table->date('start_date');
-            $table->date('next_billing_cycle');
-            $table->longText('short_note');
-            $table->string('category');
+            $table->date('next_billing_date')->nullable();
+            $table->text('short_note')->nullable();
+            $table->string('category')->nullable();
             $table->timestamps();
         });
     }
@@ -33,6 +33,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('_subscriptions');
+        Schema::dropIfExists('subscriptions');
     }
 };

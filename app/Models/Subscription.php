@@ -9,24 +9,22 @@ class Subscription extends Model
 {
     use HasFactory;
 
-    protected $table = '_subscriptions';
-
     protected $fillable = [
         'user_id',
         'name',
-        'amount',
+        'cost',
         'status',
         'billing_cycle',
         'start_date',
-        'next_billing_cycle',
+        'next_billing_date',
         'short_note',
         'category',
     ];
 
     protected $casts = [
-        'amount' => 'decimal:2', // safer than float for money
+        'cost' => 'decimal:2', // safer than float for money
         'start_date' => 'date',
-        'next_billing_cycle' => 'date',
+        'next_billing_date' => 'date',
     ];
 
     public function user()

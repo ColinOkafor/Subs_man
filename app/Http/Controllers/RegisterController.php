@@ -34,7 +34,7 @@ class RegisterController extends Controller
         Auth::login($user);
 
         // 5. Redirect the user to their dashboard page
-        return redirect()->route('dashboard');
+        return redirect()->route('subscriptions.index');
     }
 
     /**

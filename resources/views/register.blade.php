@@ -18,7 +18,7 @@
                         User Name
                     </label>
                     <input class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-500" 
-                           id="name" type="name" name="name" placeholder="John Doe" required>
+                           id="name" type="text" name="name" placeholder="John Doe" required>
                 </div>
 
                 <div class="mb-6">

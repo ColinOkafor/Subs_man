@@ -11,7 +11,7 @@ class SubscriptionController extends Controller
 {
     public function create(){
         //return the view containing the HTML form
-        return view('create_sub');
+        return view('subscriptions.create');
     }
     public function store(Request $request){
         // 1. STRICT VALIDATION
@@ -24,11 +24,11 @@ class SubscriptionController extends Controller
             'cost' => ['required', 'decimal:2'],
             'status' => ['required', 'string'],
             'billing_cycle' => ['required', 
-                                Rule::in(['weekly', 'monthly', 'annually'])],
+                                Rule::in(['weekly', 'monthly', 'quarterly', 'yearly'])],
             'start_date' =>['required', 'date', 'date_format:Y-m-d'],
-            'next_billing_date' => ['required', 'date', 'after_or_equal:today'],
-            'category' => ['required', 'string'],
-            'short_note' =>['required', 'string']
+            'next_billing_date' => ['nullable', 'date', 'after_or_equal:today'],
+            'category' => ['nullable', 'string'],
+            'short_note' =>['nullable', 'string']
         ]);
 
         // 2. CREATE THE RECORD
@@ -39,23 +39,82 @@ class SubscriptionController extends Controller
 
         // 3. REDIRECT
         // Redirect back to the 'subscriptions.index' route with a success message.
-        return redirect('subscriptions.index')->with('status', 'Subscription created successfully.');
+        return redirect()->route('subscriptions.index')->with('success', 'Subscription created successfully.');
     
     }
-    public function index( Request $request){
-        // 1. Fetch ONLY the subscriptions belonging to the currently authenticated user.
-        $subscriptions = $request->user()->subscriptions;
-        // 2. Return the view, passing those subscriptions to it.
-        return view('subscriptions.index', compact('subscriptions'));
+    public function index(Request $request)
+    {
+        $query = $request->user()->subscriptions();
+
+        // Search
+        if ($request->filled('q')) {
+            $q = $request->q;
+            $query->where(function ($builder) use ($q) {
+                $builder->where('name', 'like', "%{$q}%")
+                        ->orWhere('short_note', 'like', "%{$q}%");
+            });
+        }
+
+        // Filter by billing cycle
+        if ($request->filled('cycle_filter')) {
+            $query->where('billing_cycle', $request->cycle_filter);
+        }
+
+        // Filter by status
+        if ($request->filled('status')) {
+            $query->where('status', $request->status);
+        }
+
+        // Filter by category
+        if ($request->filled('category')) {
+            $query->where('category', $request->category);
+        }
+
+        // Sorting
+        $sort = $request->get('sort', 'next_billing_date');
+        $direction = $request->get('direction', 'asc');
+        $allowedSorts = ['next_billing_date', 'cost', 'name'];
+        if (in_array($sort, $allowedSorts)) {
+            $query->orderBy($sort, $direction === 'desc' ? 'desc' : 'asc');
+        }
+
+        // Tab filtering
+        $tab = $request->get('tab', 'saved');
+        if ($tab === 'due') {
+            $query->whereNotNull('next_billing_date')
+                ->whereBetween('next_billing_date', [now()->toDateString(), now()->addDays(7)->toDateString()]);
+        } else {
+            // 'saved' tab — due more than a week away or no date set
+            $query->where(function ($q) {
+                $q->whereNull('next_billing_date')
+                ->orWhere('next_billing_date', '>', now()->addDays(7)->toDateString());
+            });
+        }
+
+        $subscriptions = $query->paginate(10);
+        // Monthly total across all user's active subscriptions (not just current page)
+        $totalPerMonth = $request->user()->subscriptions()
+            ->where('status', 'active')
+            ->get()
+            ->sum(function ($sub) {
+                return match ($sub->billing_cycle) {
+                    'weekly'    => $sub->cost * 52 / 12,
+                    'monthly'   => $sub->cost,
+                    'quarterly' => $sub->cost / 3,
+                    'yearly'    => $sub->cost / 12,
+                    default     => 0,
+                };
+            });
+
+        return view('subscriptions.index', compact('subscriptions', 'totalPerMonth'));
     }
-    public function show(Subscription $subscription){
+    public function show(Request $request, Subscription $subscription){
         // 1. SECURITY CHECK: Ensure the logged-in user actually owns THIS subscription.
         abort_if($subscription->user_id !== $request->user()->id, 403);
         // (Laravel Route Model Binding doesn't check ownership by default unless scoped).
         // 2. Return the detailed view, passing the single subscription object.
-        return view('subscriptions.show', [
-            'subscription' => $subscription
-        ]);
+        return view('subscriptions.show', compact('subscription'));
+
     }
         public function edit(Request $request, Subscription $subscription){
         // SECURITY: Reject if the logged-in user does not own this subscription
@@ -69,17 +128,22 @@ class SubscriptionController extends Controller
         abort_if($subscription->user_id !== $request->user()->id, 403, 'Unauthorized access.');
 
         // 1. VALIDATE: Use the exact same validation rules in store() method
-        $validatedData = $request->validate([
-            'name' => ['required', 'string'],
-            'cost' => ['required', 'decimal:2'],
-            // ... the rest of the rules ...
+        $validated = $request->validate([
+            'name'             => ['required', 'string', 'max:255'],
+            'cost'             => ['required', 'numeric', 'min:0'],
+            'status'           => ['required', Rule::in(['active', 'paused', 'cancelled'])],
+            'billing_cycle'    => ['required', Rule::in(['weekly', 'monthly', 'quarterly', 'yearly'])],
+            'start_date'       => ['nullable', 'date', 'date_format:Y-m-d'],
+            'next_billing_date'=> ['nullable', 'date', 'date_format:Y-m-d'],
+            'category'         => ['nullable', 'string', 'max:255'],
+            'short_note'       => ['nullable', 'string', 'max:300'],
         ]);
 
         // 2. UPDATE THE RECORD
-        $subscription->update($validatedData);
+        $subscription->update($validated);
 
         // 3. REDIRECT
-        return redirect()->route('subscriptions.index')->with('status', 'Subscription updated.');
+        return redirect()->route('subscriptions.index')->with('success', 'Subscription updated.');
     }
 
     public function destroy(Request $request, Subscription $subscription){
@@ -88,6 +152,6 @@ class SubscriptionController extends Controller
 
         $subscription->delete();
 
-        return redirect()->route('subscriptions.index')->with('status', 'Subscription deleted.');
+        return redirect()->route('subscriptions.index')->with('success', 'Subscription deleted.');
     }
 }

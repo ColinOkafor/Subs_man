@@ -4,8 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>My Laravel App</title>
-    <script src="https://cdn.tailwindcss.com"></script>
-</head>
+    @vite(['resources/css/app.css', 'resources/js/app.js'])</head>
 <body class="h-full flex flex-col">
     
     <nav class="bg-white shadow-sm border-b border-gray-200 shrink-0">
