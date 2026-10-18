@@ -20,7 +20,6 @@ class RegisterController extends Controller
            $userData = $request->validate([
             'name' => ['required', 'string'],
             'email' => ['required', 'email'],
-            'user_role' => ['required', 'string'],
             'password' => ['required', Password::min(8) ->mixedCase()
                                                         ->numbers()
                                                         ->symbols() ],

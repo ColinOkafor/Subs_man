@@ -36,6 +36,6 @@ it('accepts a password that meets all complexity requirements', function () {
     // Assert: There are no validation errors for the password
     $response->assertValid(['password']);
     
-    // Depending on your controller, you might also assert a redirect
+    // Depending on the controller, might also assert a redirect
     // $response->assertRedirect('/dashboard');
 });
